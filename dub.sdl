@@ -3,3 +3,60 @@ description "A fast-paced 2D action game"
 copyright "Copyright © 2016, rcorre"
 authors "rcorre"
 license "MIT"
+
+dependency "allegro" path="DAllegro5"
+
+lflags "-Lbuild/lib"
+
+libs "allegro-static"            \
+     "allegro_primitives-static" \
+     "allegro_image-static"      \
+     "allegro_font-static"       \
+     "allegro_ttf-static"        \
+     "allegro_color-static"      \
+     "m"                         \
+     "rt"                        \
+     "dl"                        \
+     "c"                         \
+     "SM"                        \
+     "ICE"                       \
+     "X11"                       \
+     "Xext"                      \
+     "Xcursor"                   \
+     "Xi"                        \
+     "Xinerama"                  \
+     "Xrandr"                    \
+     "GLU"                       \
+     "GL"                        \
+     "stdc++"                    \
+     "gcc_s"                     \
+     "png16"                     \
+     "z"                         \
+     "jpeg"                      \
+     "freetype"                  \
+     "uuid"                      \
+     "xcb"                       \
+     "Xrender"                   \
+     "Xfixes"                    \
+     "expat"                     \
+     "xcb-dri3"                  \
+     "xcb-present"               \
+     "xcb-randr"                 \
+     "xcb-xfixes"                \
+     "xcb-render"                \
+     "xcb-shape"                 \
+     "xcb-sync"                  \
+     "xshmfence"                 \
+     "glapi"                     \
+     "Xdamage"                   \
+     "X11-xcb"                   \
+     "xcb-glx"                   \
+     "xcb-dri2"                  \
+     "Xxf86vm"                   \
+     "drm"                       \
+     "bz2"                       \
+     "harfbuzz"                  \
+     "Xau"                       \
+     "Xdmcp"                     \
+     "graphite2"                 \
+     "pcre"
