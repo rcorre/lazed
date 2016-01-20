@@ -1,0 +1,6 @@
+[submodule "DAllegro5"]
+	path = DAllegro5
+	url = git://github.com/rcorre/DAllegro5
+[submodule "allegro5"]
+	path = allegro5
+	url = git://github.com/liballeg/allegro5
