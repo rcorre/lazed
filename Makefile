@@ -25,6 +25,9 @@ debug: allegro
 release: allegro
 	@dub build --build=release
 
+clean:
+	$(RM) -r $(ALLEGRO_BUILD)
+
 # --- Allegro ---
 
 allegro:
