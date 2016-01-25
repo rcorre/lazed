@@ -14,11 +14,13 @@ class Game : EntitySysD {
     this() {
         super();
 
-        _spritesheet = al_load_bitmap("spritesheet.png");
+        _spritesheet = al_load_bitmap("content/spritesheet.png");
 
         systems.register(new RenderSystem(_spritesheet));
         systems.register(new MotionSystem());
         systems.register(new InputSystem(events));
+
+        entities.createPlayer;
     }
 
     ~this() {

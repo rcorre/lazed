@@ -7,15 +7,25 @@ import allegro5.allegro_color;
 
 import components;
 
-void createPlayer(EntityManager entities, ALLEGRO_BITMAP* spritesheet) {
+private:
+enum spriteSize = 16; // size of grid in spritesheet
+
+
+enum SpriteRect {
+    player = box2i(spriteSize * 0, spriteSize * 0, spriteSize, spriteSize)
+}
+
+public:
+void createPlayer(EntityManager entities) {
     enum moveSpeed = 100; // px / sec
 
     auto ent = entities.create();
 
-    auto trans  = ent.register!Transform(vec2f(400, 400));
-    auto vel    = ent.register!Velocity();
-    auto input  = ent.register!InputListener();
-    auto sprite = ent.register!Sprite();
+    ent.register!Transform(vec2f(400, 400));
+    ent.register!Velocity();
+    ent.register!Sprite(SpriteRect.player);
+
+    auto input = ent.register!InputListener();
 
     input.keyDown = (self, key) {
         switch(key) {
@@ -36,6 +46,4 @@ void createPlayer(EntityManager entities, ALLEGRO_BITMAP* spritesheet) {
             default:
         }
     };
-
-    sprite.bmp = spritesheet;
 }

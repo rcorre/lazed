@@ -39,21 +39,19 @@ void main() {
 
     while(!exit) {
         ALLEGRO_EVENT event;
-        while(!al_is_event_queue_empty(queue)) {
-            al_wait_for_event(queue, &event);
+        al_wait_for_event(queue, &event);
 
-            switch(event.type) {
-                case ALLEGRO_EVENT_TIMER:
-                    update = true;
-                    break;
-                case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                    exit = true;
-                    break;
-                default:
-            }
-
-            game.process(event);
+        switch(event.type) {
+            case ALLEGRO_EVENT_TIMER:
+                update = update || (event.timer.source == fpsTimer);
+                break;
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                exit = true;
+                break;
+            default:
         }
+
+        game.process(event);
 
         if (update) {
             update = false;
