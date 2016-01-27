@@ -44,7 +44,7 @@ struct Collider {
 }
 
 struct Velocity {
-    vec2f linear;
+    vec2f linear = [0,0];
 }
 
 struct Timer {
