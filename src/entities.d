@@ -8,11 +8,17 @@ import allegro5.allegro_color;
 import components;
 
 private:
-enum spriteSize = 16; // size of grid in spritesheet
-
+enum spriteSize = 32; // size of grid in spritesheet
 
 enum SpriteRect {
-    player = box2i(spriteSize * 0, spriteSize * 0, spriteSize, spriteSize)
+    player = spriteAt(3, 2)
+}
+
+auto spriteAt(int row, int col) {
+    return box2i(col       * spriteSize,
+                 row       * spriteSize,
+                 (col + 1) * spriteSize,
+                 (row + 1) * spriteSize);
 }
 
 public:

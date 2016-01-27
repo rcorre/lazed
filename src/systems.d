@@ -3,6 +3,7 @@ module systems;
 
 import std.container.slist;
 
+import gfm.math;
 import entitysysd;
 import allegro5.allegro;
 import allegro5.allegro_color;
@@ -28,13 +29,21 @@ class RenderSystem : System {
         // holding optimizes multiple draws from the same spritesheet
         al_hold_bitmap_drawing(true);
 
+        ALLEGRO_TRANSFORM trans;
         foreach (entity; entities.entitiesWith!(Sprite, Transform)) {
-            auto trans = entity.component!Transform.allegroTransform;
+            auto entityTrans = entity.component!Transform.allegroTransform;
+            auto r = entity.component!Sprite.rect;
+
+            al_identity_transform(&trans);
+            // place the origin of the sprite at its center
+            al_translate_transform(&trans, -r.width / 2, -r.height / 2);
+            al_compose_transform(&trans, &entityTrans);
             al_use_transform(&trans);
 
-            auto r = entity.component!Sprite.rect;
-            al_draw_bitmap_region(_spritesheet, r.min.x, r.min.y, r.width,
-                                  r.height, 0, 0, 0);
+            al_draw_bitmap_region(_spritesheet,
+                                  r.min.x, r.min.y, r.width, r.height,
+                                  0, 0,
+                                  0);
         }
 
         al_hold_bitmap_drawing(false);
