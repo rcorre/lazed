@@ -17,7 +17,7 @@ enum SpriteRect {
 
 public:
 void createPlayer(EntityManager entities) {
-    enum moveSpeed = 100; // px / sec
+    enum speed = 100; // px / sec
 
     auto ent = entities.create();
 
@@ -29,20 +29,20 @@ void createPlayer(EntityManager entities) {
 
     input.keyDown = (self, key) {
         switch(key) {
-            case ALLEGRO_KEY_W: self.component!Velocity.linear.y -= 1; break;
-            case ALLEGRO_KEY_S: self.component!Velocity.linear.y += 1; break;
-            case ALLEGRO_KEY_A: self.component!Velocity.linear.x -= 1; break;
-            case ALLEGRO_KEY_D: self.component!Velocity.linear.x += 1; break;
+            case ALLEGRO_KEY_W: self.component!Velocity.linear.y -= speed; break;
+            case ALLEGRO_KEY_S: self.component!Velocity.linear.y += speed; break;
+            case ALLEGRO_KEY_A: self.component!Velocity.linear.x -= speed; break;
+            case ALLEGRO_KEY_D: self.component!Velocity.linear.x += speed; break;
             default:
         }
     };
 
     input.keyUp = (self, key) {
         switch(key) {
-            case ALLEGRO_KEY_W: self.component!Velocity.linear.y += 1; break;
-            case ALLEGRO_KEY_S: self.component!Velocity.linear.y -= 1; break;
-            case ALLEGRO_KEY_A: self.component!Velocity.linear.x += 1; break;
-            case ALLEGRO_KEY_D: self.component!Velocity.linear.x -= 1; break;
+            case ALLEGRO_KEY_W: self.component!Velocity.linear.y += speed; break;
+            case ALLEGRO_KEY_S: self.component!Velocity.linear.y -= speed; break;
+            case ALLEGRO_KEY_A: self.component!Velocity.linear.x += speed; break;
+            case ALLEGRO_KEY_D: self.component!Velocity.linear.x -= speed; break;
             default:
         }
     };
