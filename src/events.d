@@ -5,7 +5,8 @@ import allegro5.allegro;
 
 @event:
 
-struct KeyboardEvent {
-    ALLEGRO_EVENT_TYPE type;
-    int key;
+/// Wraps an allegro-generated event to pass it through the ECS event framework
+struct AllegroEvent {
+    ALLEGRO_EVENT ev;
+    alias ev this;
 }

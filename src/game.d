@@ -32,12 +32,6 @@ class Game : EntitySysD {
     }
 
     void process(in ALLEGRO_EVENT ev) {
-        switch(ev.type) {
-            case ALLEGRO_EVENT_KEY_DOWN:
-            case ALLEGRO_EVENT_KEY_UP:
-                events.emit!KeyboardEvent(ev.type, ev.keyboard.keycode);
-                break;
-            default:
-        }
+        events.emit!AllegroEvent(ev);
     }
 }

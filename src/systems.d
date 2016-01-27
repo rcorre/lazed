@@ -58,11 +58,11 @@ class MotionSystem : System {
     }
 }
 
-class InputSystem : System, Receiver!KeyboardEvent {
-    SList!KeyboardEvent _queue;
+class InputSystem : System, Receiver!AllegroEvent {
+    SList!AllegroEvent _queue;
 
     this(EventManager events) {
-        events.subscribe!KeyboardEvent(this);
+        events.subscribe!AllegroEvent(this);
     }
 
     override void run(EntityManager es, EventManager events, Duration dt) {
@@ -71,15 +71,24 @@ class InputSystem : System, Receiver!KeyboardEvent {
             _queue.removeFront();
 
             foreach (ent; es.entitiesWith!InputListener) {
-                if (ev.type == ALLEGRO_EVENT_KEY_DOWN)
-                    ent.component!InputListener.keyDown(ent, ev.key);
-                else if (ev.type == ALLEGRO_EVENT_KEY_UP)
-                    ent.component!InputListener.keyUp(ent, ev.key);
+                auto listener = ent.component!InputListener;
+                switch (ev.type) {
+                    case ALLEGRO_EVENT_KEY_DOWN:
+                        listener.keyDown(ent, ev.keyboard.keycode);
+                        break;
+                    case ALLEGRO_EVENT_KEY_UP:
+                        listener.keyUp(ent, ev.keyboard.keycode);
+                        break;
+                    case ALLEGRO_EVENT_MOUSE_AXES:
+                        listener.mouseMoved(ent, vec2f(ev.mouse.x, ev.mouse.y));
+                        break;
+                    default:
+                }
             }
         }
     }
 
-    void receive(KeyboardEvent ev) {
+    void receive(AllegroEvent ev) {
         _queue.insertFront(ev);
     }
 }

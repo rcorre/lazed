@@ -46,4 +46,11 @@ void createPlayer(EntityManager entities) {
             default:
         }
     };
+
+    // face the mouse
+    input.mouseMoved = (self, pos) {
+        import std.math : atan2;
+        auto disp = pos - self.component!Transform.pos;
+        self.component!Transform.angle = atan2(disp.y, disp.x);
+    };
 }

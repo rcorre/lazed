@@ -36,6 +36,7 @@ struct Sprite {
 struct InputListener {
     void function(Entity self, int key) keyDown;
     void function(Entity self, int key) keyUp;
+    void function(Entity self, vec2f pos) mouseMoved;
 }
 
 struct Collider {
