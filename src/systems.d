@@ -7,6 +7,7 @@ import gfm.math;
 import entitysysd;
 import allegro5.allegro;
 import allegro5.allegro_color;
+import allegro5.allegro_primitives;
 
 import events;
 import entities;
@@ -20,8 +21,6 @@ class RenderSystem : System {
     }
 
     override void run(EntityManager entities, EventManager events, Duration dt) {
-        al_clear_to_color(al_map_rgb(0,0,0));
-
         // store old transformation to restore later.
         ALLEGRO_TRANSFORM oldTrans;
         al_copy_transform(&oldTrans, al_get_current_transform());
@@ -50,8 +49,6 @@ class RenderSystem : System {
 
         // restore previous transform
         al_use_transform(&oldTrans);
-
-        al_flip_display();
     }
 }
 
@@ -109,5 +106,19 @@ class InputSystem : System, Receiver!AllegroEvent {
 
     void receive(AllegroEvent ev) {
         _queue.insertFront(ev);
+    }
+}
+
+class LineRenderSystem : System {
+    override void run(EntityManager entities, EventManager events, Duration dt) {
+        immutable color = al_map_rgb(255, 0, 0);
+        immutable thickness = 4;
+        foreach (ent; entities.entitiesWith!Line) {
+            auto line = ent.component!Line;
+            auto start = line.nodes[0];
+            foreach (end ; line.nodes[1..$]) {
+                al_draw_line(start.x, start.y, end.x, end.y, color, thickness);
+            }
+        }
     }
 }

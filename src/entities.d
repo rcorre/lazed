@@ -59,4 +59,15 @@ void createPlayer(EntityManager entities) {
         auto disp = pos - self.component!Transform.pos;
         self.component!Transform.angle = atan2(disp.y, disp.x);
     };
+
+    // fire a laser
+    input.mouseDown = (em, self, pos, button) {
+        em.createLaser(self.component!Transform.pos, pos);
+    };
+}
+
+void createLaser(EntityManager em, vec2f start, vec2f end) {
+    auto laser = em.create();
+    auto line = laser.register!Line;
+    line.nodes = [ start, end ];
 }

@@ -19,6 +19,7 @@ class Game : EntitySysD {
         systems.register(new RenderSystem(_spritesheet));
         systems.register(new MotionSystem());
         systems.register(new InputSystem(events));
+        systems.register(new LineRenderSystem());
 
         entities.createPlayer;
     }
@@ -28,7 +29,9 @@ class Game : EntitySysD {
     }
 
     void update(Duration dt) {
+        al_clear_to_color(al_map_rgb(0,0,0));
         systems.run(dt);
+        al_flip_display();
     }
 
     void process(in ALLEGRO_EVENT ev) {

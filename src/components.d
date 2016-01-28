@@ -54,3 +54,7 @@ struct Timer {
     ALLEGRO_TIMER *timer;
     void function(Entity self) onTick;
 }
+
+struct Line {
+    vec2f[] nodes;
+}
