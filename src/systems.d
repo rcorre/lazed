@@ -75,6 +75,10 @@ class InputSystem : System, Receiver!AllegroEvent {
     }
 
     override void run(EntityManager es, EventManager events, Duration dt) {
+        auto pos(ALLEGRO_EVENT ev) {
+            return vec2f(ev.mouse.x, ev.mouse.y);
+        }
+
         while(!_queue.empty) {
             auto ev = _queue.front;
             _queue.removeFront();
@@ -83,13 +87,19 @@ class InputSystem : System, Receiver!AllegroEvent {
                 auto listener = ent.component!InputListener;
                 switch (ev.type) {
                     case ALLEGRO_EVENT_KEY_DOWN:
-                        listener.keyDown(ent, ev.keyboard.keycode);
+                        listener.keyDown(es, ent, ev.keyboard.keycode);
                         break;
                     case ALLEGRO_EVENT_KEY_UP:
-                        listener.keyUp(ent, ev.keyboard.keycode);
+                        listener.keyUp(es, ent, ev.keyboard.keycode);
                         break;
                     case ALLEGRO_EVENT_MOUSE_AXES:
-                        listener.mouseMoved(ent, vec2f(ev.mouse.x, ev.mouse.y));
+                        listener.mouseMoved(es, ent, pos(ev));
+                        break;
+                    case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                        listener.mouseDown(es, ent, pos(ev), ev.mouse.button);
+                        break;
+                    case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                        listener.mouseUp(es, ent, pos(ev), ev.mouse.button);
                         break;
                     default:
                 }

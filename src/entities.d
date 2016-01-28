@@ -33,7 +33,7 @@ void createPlayer(EntityManager entities) {
 
     auto input = ent.register!InputListener();
 
-    input.keyDown = (self, key) {
+    input.keyDown = (em, self, key) {
         switch(key) {
             case ALLEGRO_KEY_W: self.component!Velocity.linear.y -= speed; break;
             case ALLEGRO_KEY_S: self.component!Velocity.linear.y += speed; break;
@@ -43,7 +43,7 @@ void createPlayer(EntityManager entities) {
         }
     };
 
-    input.keyUp = (self, key) {
+    input.keyUp = (em, self, key) {
         switch(key) {
             case ALLEGRO_KEY_W: self.component!Velocity.linear.y += speed; break;
             case ALLEGRO_KEY_S: self.component!Velocity.linear.y -= speed; break;
@@ -54,7 +54,7 @@ void createPlayer(EntityManager entities) {
     };
 
     // face the mouse
-    input.mouseMoved = (self, pos) {
+    input.mouseMoved = (em, self, pos) {
         import std.math : atan2;
         auto disp = pos - self.component!Transform.pos;
         self.component!Transform.angle = atan2(disp.y, disp.x);
