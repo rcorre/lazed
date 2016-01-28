@@ -44,7 +44,9 @@ allegro:
 
 # --- Content Pipeline ---
 
-content: fonts images music sounds
+content: content_dir fonts images music sounds
+
+content_dir:
 	@mkdir -p $(CONTENT_DEST)
 
 # Copy font files from resource to content
