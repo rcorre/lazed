@@ -20,7 +20,7 @@ class RenderSystem : System {
         _spritesheet = spritesheet;
     }
 
-    override void run(EntityManager entities, EventManager events, Duration dt) {
+    override void run(EntityManager em, EventManager events, Duration dt) {
         // store old transformation to restore later.
         ALLEGRO_TRANSFORM oldTrans;
         al_copy_transform(&oldTrans, al_get_current_transform());
@@ -29,7 +29,7 @@ class RenderSystem : System {
         al_hold_bitmap_drawing(true);
 
         ALLEGRO_TRANSFORM trans;
-        foreach (entity; entities.entitiesWith!(Sprite, Transform)) {
+        foreach (entity; em.entitiesWith!(Sprite, Transform)) {
             auto entityTrans = entity.component!Transform.allegroTransform;
             auto r = entity.component!Sprite.rect;
 
@@ -53,8 +53,8 @@ class RenderSystem : System {
 }
 
 class MotionSystem : System {
-    override void run(EntityManager entities, EventManager events, Duration dt) {
-        foreach (entity; entities.entitiesWith!(Transform, Velocity)) {
+    override void run(EntityManager em, EventManager events, Duration dt) {
+        foreach (entity; em.entitiesWith!(Transform, Velocity)) {
             auto linear = entity.component!Velocity.linear;
             auto time = dt.total!"msecs" / 1000f;
             auto trans = entity.component!Transform;
@@ -110,10 +110,10 @@ class InputSystem : System, Receiver!AllegroEvent {
 }
 
 class LineRenderSystem : System {
-    override void run(EntityManager entities, EventManager events, Duration dt) {
+    override void run(EntityManager em, EventManager events, Duration dt) {
         immutable color = al_map_rgb(255, 0, 0);
         immutable thickness = 4;
-        foreach (ent; entities.entitiesWith!Line) {
+        foreach (ent; em.entitiesWith!Line) {
             auto line = ent.component!Line;
             auto start = line.nodes[0];
             foreach (end ; line.nodes[1..$]) {

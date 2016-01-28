@@ -22,10 +22,10 @@ auto spriteAt(int row, int col) {
 }
 
 public:
-void createPlayer(EntityManager entities) {
+void createPlayer(EntityManager em) {
     enum speed = 100; // px / sec
 
-    auto ent = entities.create();
+    auto ent = em.create();
 
     ent.register!Transform(vec2f(400, 400));
     ent.register!Velocity();
