@@ -20,6 +20,7 @@ class Game : EntitySysD {
         systems.register(new MotionSystem());
         systems.register(new InputSystem(events));
         systems.register(new LineRenderSystem());
+        systems.register(new TimerSystem());
 
         entities.createPlayer;
     }

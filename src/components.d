@@ -51,10 +51,18 @@ struct Velocity {
 }
 
 struct Timer {
-    ALLEGRO_TIMER *timer;
-    void function(Entity self) onTick;
+    alias TickHandler = void function(EntityManager em, Entity self, float elapsed);
+
+    float duration, countdown;
+    TickHandler onTick;
+
+    this(float duration) {
+        this.duration = this.countdown = duration;
+    }
 }
 
 struct Line {
     vec2f[] nodes;
+    ALLEGRO_COLOR color;
+    float thickness;
 }

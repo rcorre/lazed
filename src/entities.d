@@ -67,7 +67,19 @@ void createPlayer(EntityManager em) {
 }
 
 void createLaser(EntityManager em, vec2f start, vec2f end) {
+    immutable color = al_map_rgb(255, 0, 0);
+    enum thickness = 4;
+    enum fadePerSec = 2f; // fade 100% over 0.5s
+
     auto laser = em.create();
-    auto line = laser.register!Line;
-    line.nodes = [ start, end ];
+
+    auto line = laser.register!Line([ start, end ], color, thickness);
+
+    auto timer = laser.register!Timer(0f);
+    timer.onTick = (em, self, elapsed) {
+        // fade over time, destroy self when totally faded
+        auto line = self.component!Line;
+        line.color.r -= elapsed * fadePerSec;
+        if (line.color.r <= 0) self.destroy();
+    };
 }

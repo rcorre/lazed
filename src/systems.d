@@ -111,13 +111,25 @@ class InputSystem : System, Receiver!AllegroEvent {
 
 class LineRenderSystem : System {
     override void run(EntityManager em, EventManager events, Duration dt) {
-        immutable color = al_map_rgb(255, 0, 0);
-        immutable thickness = 4;
         foreach (ent; em.entitiesWith!Line) {
             auto line = ent.component!Line;
             auto start = line.nodes[0];
             foreach (end ; line.nodes[1..$]) {
-                al_draw_line(start.x, start.y, end.x, end.y, color, thickness);
+                al_draw_line(start.x, start.y, end.x, end.y, line.color, line.thickness);
+            }
+        }
+    }
+}
+
+class TimerSystem : System {
+    override void run(EntityManager em, EventManager events, Duration dt) {
+        foreach (ent; em.entitiesWith!Timer) {
+            immutable elapsed = dt.total!"msecs" / 1000f;
+            auto timer = ent.component!Timer;
+
+            if ((timer.countdown -= elapsed) < 0) {
+                timer.countdown = timer.duration;
+                timer.onTick(em, ent, elapsed);
             }
         }
     }
