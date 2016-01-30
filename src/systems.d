@@ -1,6 +1,6 @@
 module systems;
 
-
+import std.range;
 import std.container.slist;
 
 import gfm.math;
@@ -111,13 +111,9 @@ class InputSystem : System, Receiver!AllegroEvent {
 
 class LineRenderSystem : System {
     override void run(EntityManager em, EventManager events, Duration dt) {
-        foreach (ent; em.entitiesWith!Line) {
-            auto line = ent.component!Line;
-            auto start = line.nodes[0];
-            foreach (end ; line.nodes[1..$]) {
+        foreach (line; em.components!Line)
+            foreach (start, end ; line.nodes.lockstep(line.nodes.drop(1)))
                 al_draw_line(start.x, start.y, end.x, end.y, line.color, line.thickness);
-            }
-        }
     }
 }
 
