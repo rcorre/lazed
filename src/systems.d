@@ -54,12 +54,9 @@ class RenderSystem : System {
 
 class MotionSystem : System {
     override void run(EntityManager em, EventManager events, Duration dt) {
-        foreach (entity; em.entitiesWith!(Transform, Velocity)) {
-            auto linear = entity.component!Velocity.linear;
+        foreach (entity, trans, vel; em.entitiesWith!(Transform, Velocity)) {
             auto time = dt.total!"msecs" / 1000f;
-            auto trans = entity.component!Transform;
-
-            trans.pos = trans.pos + linear * time;
+            trans.pos = trans.pos + vel.linear * time;
         }
     }
 }
@@ -80,8 +77,7 @@ class InputSystem : System, Receiver!AllegroEvent {
             auto ev = _queue.front;
             _queue.removeFront();
 
-            foreach (ent; es.entitiesWith!InputListener) {
-                auto listener = ent.component!InputListener;
+            foreach (ent, listener; es.entitiesWith!InputListener) {
                 switch (ev.type) {
                     case ALLEGRO_EVENT_KEY_DOWN:
                         listener.keyDown(es, ent, ev.keyboard.keycode);
@@ -119,9 +115,8 @@ class LineRenderSystem : System {
 
 class TimerSystem : System {
     override void run(EntityManager em, EventManager events, Duration dt) {
-        foreach (ent; em.entitiesWith!Timer) {
+        foreach (ent, timer; em.entitiesWith!Timer) {
             immutable elapsed = dt.total!"msecs" / 1000f;
-            auto timer = ent.component!Timer;
 
             if ((timer.countdown -= elapsed) < 0) {
                 timer.countdown = timer.duration;
