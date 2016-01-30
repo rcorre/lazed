@@ -17,10 +17,11 @@ class Game : EntitySysD {
         _spritesheet = al_load_bitmap("content/spritesheet.png");
 
         systems.register(new RenderSystem(_spritesheet));
-        systems.register(new MotionSystem());
+        systems.register(new MotionSystem);
         systems.register(new InputSystem(events));
-        systems.register(new LineRenderSystem());
-        systems.register(new TimerSystem());
+        systems.register(new LineRenderSystem);
+        systems.register(new TimerSystem);
+        systems.register(new AnimationSystem);
 
         entities.createPlayer;
     }

@@ -134,3 +134,20 @@ class TimerSystem : System {
         }
     }
 }
+
+class AnimationSystem : System {
+    private enum maxFrame = 8;  // all animations have 8 frames
+
+    override void run(EntityManager em, EventManager events, Duration dt) {
+        foreach (ent, ani, sprite; em.entitiesWith!(Animator, Sprite)) {
+            immutable elapsed = dt.total!"msecs" / 1000f;
+
+            if (ani.run && (ani.countdown -= elapsed) < 0) {
+                ani.countdown = ani.duration;
+                ani.frame = (ani.frame + 1) % maxFrame;
+            }
+
+            sprite.rect = ani.start.translate(ani.offset * ani.frame);
+        }
+    }
+}

@@ -66,3 +66,17 @@ struct Line {
     ALLEGRO_COLOR color;
     float thickness;
 }
+
+struct Animator {
+    float duration, countdown;
+    int frame;
+    box2i start;
+    vec2i offset;
+    bool run;
+
+    this(float duration, box2i start, vec2i offset) {
+        this.duration = this.countdown = duration;
+        this.start = start;
+        this.offset = offset;
+    }
+}

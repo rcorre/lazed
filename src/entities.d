@@ -9,6 +9,7 @@ import components;
 
 private:
 enum spriteSize = 32; // size of grid in spritesheet
+enum animationOffset = vec2i(32 * 4, 0); // space between animation frames
 
 enum SpriteRect {
     player = spriteAt(3, 2)
@@ -30,27 +31,36 @@ void createPlayer(EntityManager em) {
     ent.register!Transform(vec2f(400, 400));
     ent.register!Velocity();
     ent.register!Sprite(SpriteRect.player);
+    ent.register!Animator(0.1f, SpriteRect.player, animationOffset);
 
     auto input = ent.register!InputListener();
 
     input.keyDown = (em, self, key) {
+        auto ref vel() { return self.component!Velocity.linear; }
+
         switch(key) {
-            case ALLEGRO_KEY_W: self.component!Velocity.linear.y -= speed; break;
-            case ALLEGRO_KEY_S: self.component!Velocity.linear.y += speed; break;
-            case ALLEGRO_KEY_A: self.component!Velocity.linear.x -= speed; break;
-            case ALLEGRO_KEY_D: self.component!Velocity.linear.x += speed; break;
+            case ALLEGRO_KEY_W: vel.y -= speed; break;
+            case ALLEGRO_KEY_S: vel.y += speed; break;
+            case ALLEGRO_KEY_A: vel.x -= speed; break;
+            case ALLEGRO_KEY_D: vel.x += speed; break;
             default:
         }
+
+        self.component!Animator.run = vel.length > 0; // animate if moving
     };
 
     input.keyUp = (em, self, key) {
+        auto ref vel() { return self.component!Velocity.linear; }
+
         switch(key) {
-            case ALLEGRO_KEY_W: self.component!Velocity.linear.y += speed; break;
-            case ALLEGRO_KEY_S: self.component!Velocity.linear.y -= speed; break;
-            case ALLEGRO_KEY_A: self.component!Velocity.linear.x += speed; break;
-            case ALLEGRO_KEY_D: self.component!Velocity.linear.x -= speed; break;
+            case ALLEGRO_KEY_W: vel.y += speed; break;
+            case ALLEGRO_KEY_S: vel.y -= speed; break;
+            case ALLEGRO_KEY_A: vel.x += speed; break;
+            case ALLEGRO_KEY_D: vel.x -= speed; break;
             default:
         }
+
+        self.component!Animator.run = vel.length > 0; // animate if moving
     };
 
     // face the mouse
