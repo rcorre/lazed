@@ -5,7 +5,7 @@ authors "rcorre"
 license "MIT"
 
 dependency "allegro" path="DAllegro5"
-dependency "gfm:math" version="~>4.0.3"
+dependency "gfm:math" version="~>5.0.0"
 dependency "entitysysd" version="~>2.1.1"
 
 lflags "-Lbuild/lib"
