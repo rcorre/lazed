@@ -4,6 +4,7 @@ copyright "Copyright © 2016, rcorre"
 authors "rcorre"
 license "MIT"
 
+dependency "dtiled" version="~>0.3.0"
 dependency "allegro" path="DAllegro5"
 dependency "gfm:math" version="~>5.0.0"
 dependency "entitysysd" version="~>2.1.1"

@@ -3,7 +3,9 @@
 	"versions": {
 		"derelict-sdl2": "1.9.7",
 		"derelict-util": "2.0.4",
-		"gfm": "5.0.0",
-		"entitysysd": "2.1.1"
+		"jsonizer": "0.5.2",
+		"entitysysd": "2.1.1",
+		"dtiled": "0.3.3",
+		"gfm": "5.0.0"
 	}
 }
