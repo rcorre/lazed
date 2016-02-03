@@ -27,17 +27,17 @@ unittest {
     bool yes(float[2] as, float[2] ad, float[2] bs, float[2] bd, float[2] p) {
         import std.math : approxEqual;
 
-        auto a = ray2f(vec2f(as), vec2f(ad));
-        auto b = ray2f(vec2f(bs), vec2f(bd));
-        auto res = intersect(a, b);
+        immutable a = ray2f(vec2f(as), vec2f(ad)),
+                  b = ray2f(vec2f(bs), vec2f(bd)),
+                  res = intersect(a, b);
 
         return res && res.x.approxEqual(p[0]) && res.y.approxEqual(p[1]);
     }
 
     // Validate that the ray (as, ad) doesn't intersect the ray (bs, bd)
     bool no(float[2] as, float[2] ad, float[2] bs, float[2] bd) {
-        auto r1 = ray2f(vec2f(as), vec2f(ad));
-        auto r2 = ray2f(vec2f(bs), vec2f(bd));
+        immutable r1 = ray2f(vec2f(as), vec2f(ad)),
+                  r2 = ray2f(vec2f(bs), vec2f(bd));
         return !intersect(r1, r2);
     }
 
@@ -71,7 +71,7 @@ unittest {
  */
 auto intersect(ray2f a, seg2f b) {
     float u, v;
-    auto rb = ray2f(b.a, b.b - b.a);
+    immutable rb = ray2f(b.a, b.b - b.a);
     rayIntersectProgress(a, rb, u, v);
     return (u > 0 && v > 0 && v < 1) ? intersection(a.progress(u)) : noIntersection;
 }
@@ -81,17 +81,17 @@ unittest {
     bool yes(float[2] as, float[2] ad, float[2] ba, float[2] bb, float[2] p) {
         import std.math : approxEqual;
 
-        auto a = ray2f(vec2f(as), vec2f(ad));
-        auto b = seg2f(vec2f(ba), vec2f(bb));
-        auto res = intersect(a, b);
+        immutable a = ray2f(vec2f(as), vec2f(ad)),
+                  b = seg2f(vec2f(ba), vec2f(bb)),
+                  res = intersect(a, b);
 
         return res && res.x.approxEqual(p[0]) && res.y.approxEqual(p[1]);
     }
 
     // Validate that the ray (as, ad) doesn't intersect the segment (ba, bb)
     bool no(float[2] as, float[2] ad, float[2] ba, float[2] bb) {
-        auto a = ray2f(vec2f(as), vec2f(ad));
-        auto b = seg2f(vec2f(ba), vec2f(bb));
+        immutable a = ray2f(vec2f(as), vec2f(ad)),
+                  b = seg2f(vec2f(ba), vec2f(bb));
         return !intersect(a, b);
     }
 
