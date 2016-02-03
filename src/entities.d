@@ -1,5 +1,6 @@
 module entities;
 
+import dtiled;
 import gfm.math;
 import entitysysd;
 import allegro5.allegro;
@@ -92,4 +93,27 @@ void createLaser(EntityManager em, vec2f start, vec2f end) {
         line.color.r -= elapsed * fadePerSec;
         if (line.color.r <= 0) self.destroy();
     };
+}
+
+void createMap(EntityManager em, string path) {
+  auto mapData = MapData.load(path);
+  auto tileset = mapData.tilesets[0];
+  immutable tw = tileset.tileWidth;
+  immutable th = tileset.tileHeight;
+
+  foreach(idx, gid ; mapData.getLayer("walls").data) {
+      if (!gid) continue;
+
+      auto pos = vec2f((idx % mapData.numCols) * tw + tw / 2,
+                       (idx / mapData.numCols) * th + th / 2);
+
+      auto region = box2i(tileset.tileOffsetX(gid),
+                          tileset.tileOffsetY(gid),
+                          tileset.tileOffsetX(gid) + tileset.tileWidth,
+                          tileset.tileOffsetY(gid) + tileset.tileHeight);
+
+      auto ent = em.create();
+      ent.register!Transform(pos);
+      ent.register!Sprite(region);
+  }
 }

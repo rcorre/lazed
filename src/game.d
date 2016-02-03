@@ -24,6 +24,7 @@ class Game : EntitySysD {
         systems.register(new AnimationSystem);
 
         entities.createPlayer;
+        entities.createMap("content/map0.json");
     }
 
     ~this() {
