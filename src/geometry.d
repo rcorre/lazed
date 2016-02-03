@@ -15,18 +15,8 @@ import gfm.math;
  * The point of intersection,
  */
 auto intersect(ray2f a, ray2f b) {
-    // algorithm from stack overflow answer:
-    // http://stackoverflow.com/a/2932601/1435461
-    immutable as = a.orig,
-              bs = b.orig,
-              ad = a.dir,
-              bd = b.dir,
-              dx = bs.x - as.x,
-              dy = bs.y - as.y,
-              det = bd.x * ad.y - bd.y * ad.x,
-              u = (dy * bd.x - dx * bd.y) / det,
-              v = (dy * ad.x - dx * ad.y) / det;
-
+    float u, v;
+    rayIntersectProgress(a, b, u, v);
     return (u > 0 && v > 0) ? intersection(a.progress(u)) : noIntersection;
 }
 
@@ -78,18 +68,9 @@ unittest {
  * The point of intersection,
  */
 auto intersect(ray2f a, seg2f b) {
-    // algorithm from stack overflow answer:
-    // http://stackoverflow.com/a/2932601/1435461
-    immutable as = a.orig,
-              bs = b.a,
-              ad = a.dir,
-              bd = b.b - b.a,
-              dx = bs.x - as.x,
-              dy = bs.y - as.y,
-              det = bd.x * ad.y - bd.y * ad.x,
-              u = (dy * bd.x - dx * bd.y) / det,
-              v = (dy * ad.x - dx * ad.y) / det;
-
+    float u, v;
+    auto rb = ray2f(b.a, b.b - b.a);
+    rayIntersectProgress(a, rb, u, v);
     return (u > 0 && v > 0 && v < 1) ? intersection(a.progress(u)) : noIntersection;
 }
 
@@ -132,3 +113,22 @@ struct IntersectResult {
 
 auto intersection(vec2f point) { return IntersectResult(true, point); }
 auto noIntersection() { return IntersectResult(false); }
+
+/*
+ * Helper reused for ray/segment intersection functions.
+ * u,v are the progress along a,b at which the intersection occurs
+ */
+void rayIntersectProgress(ray2f a, ray2f b, out float u, out float v) {
+    // algorithm from stack overflow answer:
+    // http://stackoverflow.com/a/2932601/1435461
+    immutable as = a.orig,
+              bs = b.orig,
+              ad = a.dir,
+              bd = b.dir,
+              dx = bs.x - as.x,
+              dy = bs.y - as.y,
+              det = bd.x * ad.y - bd.y * ad.x;
+
+    u = (dy * bd.x - dx * bd.y) / det;
+    v = (dy * ad.x - dx * ad.y) / det;
+}
