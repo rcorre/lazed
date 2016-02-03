@@ -10,10 +10,10 @@ import components;
 
 private:
 enum spriteSize = 32; // size of grid in spritesheet
-enum animationOffset = vec2i(32 * 4, 0); // space between animation frames
+enum animationOffset = vec2i(32, 0); // space between animation frames
 
 enum SpriteRect {
-    player = spriteAt(3, 2)
+    player = spriteAt(3, 0)
 }
 
 auto spriteAt(int row, int col) {
