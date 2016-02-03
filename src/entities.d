@@ -101,8 +101,9 @@ void createMap(EntityManager em, string path) {
   immutable tw = tileset.tileWidth;
   immutable th = tileset.tileHeight;
 
+  // create wall tiles
   foreach(idx, gid ; mapData.getLayer("walls").data) {
-      if (!gid) continue;
+      if (!gid) continue; // ignore spaces with no tile
 
       auto pos = vec2f((idx % mapData.numCols) * tw + tw / 2,
                        (idx / mapData.numCols) * th + th / 2);
@@ -115,5 +116,18 @@ void createMap(EntityManager em, string path) {
       auto ent = em.create();
       ent.register!Transform(pos);
       ent.register!Sprite(region);
+  }
+
+  // create colliders
+  foreach(obj ; mapData.getLayer("collision").objects) {
+      auto box = box2f(obj.x,
+                       obj.y,
+                       obj.x + obj.width,
+                       obj.y + obj.height);
+
+      bool reflective = obj.type == "reflect";
+
+      auto ent = em.create();
+      ent.register!Collider(box, reflective);
   }
 }
