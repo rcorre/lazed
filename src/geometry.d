@@ -1,5 +1,7 @@
 module geometry;
 
+import std.algorithm;
+import std.range;
 import gfm.math;
 
 /**
@@ -102,13 +104,94 @@ unittest {
     assert(no([ 0, 0 ], [-1,-1 ], [ 1, 1 ], [ 2, 2 ]));
 }
 
+/**
+ * Returns a range of the segments composing the sides of a box.
+ */
+auto edges(box2f box) {
+    return only(seg2f(box.min, vec2f(box.min.x, box.max.y)),  // left
+                seg2f(box.min, vec2f(box.max.x, box.min.y)),  // top
+                seg2f(vec2f(box.max.x, box.min.y), box.max),  // right
+                seg2f(vec2f(box.min.x, box.max.y), box.max)); // bottom
+}
+
+unittest {
+    import std.algorithm : all, canFind;
+
+    auto actual = box2f(0, 2, 4, 8).edges;
+    auto expected = [
+        seg2f(vec2f(0, 2), vec2f(0, 8)), // left
+        seg2f(vec2f(0, 2), vec2f(4, 2)), // top
+        seg2f(vec2f(4, 2), vec2f(4, 8)), // right
+        seg2f(vec2f(0, 8), vec2f(4, 8)), // bottom
+    ];
+
+    assert(actual.length == expected.length);
+    assert(expected.all!(x => actual.canFind(x)));
+}
+
+/**
+ * Determine if and where a ray intersects a box.
+ *
+ * Given multiple intersections, returns the one closest to the ray's origin.
+ */
+auto intersect(ray2f ray, box2f box) {
+    // true if a is closer than b to the ray's origin
+    auto closer(vec2f a, vec2f b) {
+        return a.squaredDistanceTo(ray.orig) < b.squaredDistanceTo(ray.orig);
+    }
+
+    auto hits = box.edges
+        .map!(side => ray.intersect(side)) // intersect the ray with each edge
+        .filter!(hit => hit)               // remove non-hits
+        .minPos!((a,b) => closer(a,b));    // take the closest hit
+
+    return hits.empty ? noIntersection : hits.front;
+}
+
+unittest {
+    // Validate that the ray (as, ad) intersects the box [b1, b2]
+    bool yes(float[2] as, float[2] ad, float[2] b1, float[2] b2, float[2] p) {
+        import std.math : approxEqual;
+
+        immutable ray = ray2f(vec2f(as), vec2f(ad)),
+                  box = box2f(vec2f(b1), vec2f(b2)),
+                  res = intersect(ray, box);
+
+        return res && res.x.approxEqual(p[0]) && res.y.approxEqual(p[1]);
+    }
+
+    // Validate that the ray (as, ad) doesn't intersect the segment (ba, bb)
+    bool no(float[2] as, float[2] ad, float[2] b1, float[2] b2) {
+        immutable ray = ray2f(vec2f(as), vec2f(ad)),
+                  box = box2f(vec2f(b1), vec2f(b2));
+        return !intersect(ray, box);
+    }
+
+    //            as        ad        b1        b2        p
+    assert(yes([ 0, 2 ], [ 1, 0 ], [ 1, 0 ], [ 4, 4 ], [ 1, 2 ]));
+
+    //            as        ad        b1        b2
+    assert(no([ 0, 2 ], [ 0, 1 ], [ 1, 0 ], [ 4, 4 ]));
+}
+
+/**
+ * Determine if and where a ray intersects a box.
+ *
+ * Params:
+ * a = first ray
+ * b = second ray
+ *
+ * Returns:
+ * The point of intersection,
+ */
+
 private:
 struct IntersectResult {
     private bool _ok;
     vec2f _point;
 
     alias _point this; // behave like a vector
-    bool opCast(T : bool)() { return _ok; }
+    bool opCast(T : bool)() const { return _ok; }
 }
 
 auto intersection(vec2f point) { return IntersectResult(true, point); }
