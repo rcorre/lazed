@@ -2,8 +2,11 @@
 CONTENT_SOURCE = resources
 CONTENT_DEST = content
 
-FONT_FILES  := $(wildcard $(CONTENT_SOURCE)/*.ttf)
-SOUND_FILES := $(wildcard $(CONTENT_SOURCE)/*.wav)
+COPY_FILES := \
+	$(wildcard $(CONTENT_SOURCE)/*.json) \
+	$(wildcard $(CONTENT_SOURCE)/*.ttf) \
+	$(wildcard $(CONTENT_SOURCE)/*.wav)
+
 IMAGE_FILES := $(wildcard $(CONTENT_SOURCE)/*.ase)
 MUSIC_FILES := $(wildcard $(CONTENT_SOURCE)/*.mmpz)
 
@@ -44,24 +47,16 @@ allegro:
 
 # --- Content Pipeline ---
 
-content: content_dir fonts images music sounds
+content: content_dir images music copy_files
 
 content_dir:
 	@mkdir -p $(CONTENT_DEST)
 
-# Copy font files from resource to content
-fonts: $(FONT_FILES:$(CONTENT_SOURCE)/%.ttf=$(CONTENT_DEST)/%.ttf)
+# Copy files from resource to content
+copy_files: $(COPY_FILES:$(CONTENT_SOURCE)/%=$(CONTENT_DEST)/%)
 
-$(CONTENT_DEST)/%.ttf : $(CONTENT_SOURCE)/%.ttf
-	@echo copying font $*
-	@cp $(CONTENT_SOURCE)/$*.ttf $(CONTENT_DEST)/$*.ttf
-
-sounds: $(SOUND_FILES:$(CONTENT_SOURCE)/%.wav=$(CONTENT_DEST)/%.wav)
-
-# Copy sound files from resource to content
-$(CONTENT_DEST)/%.wav : $(CONTENT_SOURCE)/%.wav
-	@echo copying sound $*
-	@cp $(CONTENT_SOURCE)/$*.wav $(CONTENT_DEST)/$*.wav
+$(CONTENT_DEST)/% : $(CONTENT_SOURCE)/%
+	cp $(CONTENT_SOURCE)/$* $(CONTENT_DEST)/$*
 
 # Use aseprite to convert .ase to .png
 images: $(IMAGE_FILES:$(CONTENT_SOURCE)/%.ase=$(CONTENT_DEST)/%.png)
