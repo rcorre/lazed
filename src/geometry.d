@@ -5,6 +5,31 @@ import std.range;
 import gfm.math;
 
 /**
+ * Returns a range of the segments composing the sides of a box.
+ */
+auto edges(box2f box) {
+    return only(seg2f(box.min, vec2f(box.min.x, box.max.y)),  // left
+                seg2f(box.min, vec2f(box.max.x, box.min.y)),  // top
+                seg2f(vec2f(box.max.x, box.min.y), box.max),  // right
+                seg2f(vec2f(box.min.x, box.max.y), box.max)); // bottom
+}
+
+unittest {
+    import std.algorithm : all, canFind;
+
+    auto actual = box2f(0, 2, 4, 8).edges;
+    auto expected = [
+        seg2f(vec2f(0, 2), vec2f(0, 8)), // left
+        seg2f(vec2f(0, 2), vec2f(4, 2)), // top
+        seg2f(vec2f(4, 2), vec2f(4, 8)), // right
+        seg2f(vec2f(0, 8), vec2f(4, 8)), // bottom
+    ];
+
+    assert(actual.length == expected.length);
+    assert(expected.all!(x => actual.canFind(x)));
+}
+
+/**
  * Determine if and where two rays intersect.
  *
  * If the rays are identical, returns the first point they meet.
@@ -102,31 +127,6 @@ unittest {
     //            as        ad        ba        bb
     assert(no([ 0, 0 ], [ 1, 1 ], [ 2, 1 ], [ 4, 1 ]));
     assert(no([ 0, 0 ], [-1,-1 ], [ 1, 1 ], [ 2, 2 ]));
-}
-
-/**
- * Returns a range of the segments composing the sides of a box.
- */
-auto edges(box2f box) {
-    return only(seg2f(box.min, vec2f(box.min.x, box.max.y)),  // left
-                seg2f(box.min, vec2f(box.max.x, box.min.y)),  // top
-                seg2f(vec2f(box.max.x, box.min.y), box.max),  // right
-                seg2f(vec2f(box.min.x, box.max.y), box.max)); // bottom
-}
-
-unittest {
-    import std.algorithm : all, canFind;
-
-    auto actual = box2f(0, 2, 4, 8).edges;
-    auto expected = [
-        seg2f(vec2f(0, 2), vec2f(0, 8)), // left
-        seg2f(vec2f(0, 2), vec2f(4, 2)), // top
-        seg2f(vec2f(4, 2), vec2f(4, 8)), // right
-        seg2f(vec2f(0, 8), vec2f(4, 8)), // bottom
-    ];
-
-    assert(actual.length == expected.length);
-    assert(expected.all!(x => actual.canFind(x)));
 }
 
 /**
