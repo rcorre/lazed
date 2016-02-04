@@ -5,6 +5,34 @@ import std.range;
 import gfm.math;
 
 /**
+ * Returns the vector normal to the given segment as a unit vector.
+ *
+ * In a cartesian space where the +y axis goes 'up', `seg.normal` corresponds to the normal
+ * _counterclockwise_ from the direction of the segment (clockwise if the +y axis goes 'down').
+ * The other normal is given as `-seg.normal`.
+ */
+auto normal(seg2f seg) {
+    immutable dir = seg.b - seg.a;
+    return vec2f(-dir.y, dir.x).normalized;
+}
+
+unittest {
+    bool test(seg2f seg, vec2f expected) {
+        import std.math : approxEqual;
+        immutable norm = seg.normal;
+        return norm.x.approxEqual(expected.normalized.x) &&
+               norm.y.approxEqual(expected.normalized.y);
+    }
+
+    assert(test(seg2f(vec2f( 0, 0), vec2f( 6, 0)), vec2f( 0, 1)));
+    assert(test(seg2f(vec2f( 0, 0), vec2f(-8, 0)), vec2f( 0,-1)));
+    assert(test(seg2f(vec2f( 0, 0), vec2f( 0, 3)), vec2f(-1, 0)));
+    assert(test(seg2f(vec2f( 0, 0), vec2f( 0,-1)), vec2f( 1, 0)));
+    assert(test(seg2f(vec2f(-2,-2), vec2f( 2, 2)), vec2f(-1, 1)));
+    assert(test(seg2f(vec2f( 2, 2), vec2f(-2,-2)), vec2f( 1,-1)));
+}
+
+/**
  * Returns a range of the segments composing the sides of a box.
  */
 auto edges(box2f box) {
