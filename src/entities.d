@@ -1,16 +1,21 @@
 module entities;
 
+import std.range;
+import std.algorithm;
+
 import dtiled;
 import gfm.math;
 import entitysysd;
 import allegro5.allegro;
 import allegro5.allegro_color;
 
+import geometry;
 import components;
 
 private:
 enum spriteSize = 32; // size of grid in spritesheet
 enum animationOffset = vec2i(32, 0); // space between animation frames
+enum maxLaserBounce = 5; // number of times a laser can reflect
 
 enum SpriteRect {
     player = spriteAt(3, 0)
@@ -82,9 +87,35 @@ void createLaser(EntityManager em, vec2f start, vec2f end) {
     enum thickness = 4;
     enum fadePerSec = 2f; // fade 100% over 0.5s
 
-    auto laser = em.create();
+    // determine the path the laser takes
+    auto nodes = [ start ];
+    auto heading = end - start;
 
-    auto line = laser.register!Line([ start, end ], color, thickness);
+    auto walls = em.components!Collider
+        .array
+        .map!(x => x.rect.edges)
+        .joiner;
+
+    foreach(i ; 0..maxLaserBounce) {
+        auto ray = ray2f(nodes[$-1], heading);
+
+        auto closer(vec2f a, vec2f b) {
+            return a.squaredDistanceTo(ray.orig) < b.squaredDistanceTo(ray.orig);
+        }
+
+        auto hit = walls
+            .map!(x => ray.intersect(x))    // calculate intersection
+            .filter!(x => x)                // remove non-hits
+            .minPos!((a,b) => closer(a,b)); // take the closest hit
+
+        if (hit.empty) break; // we didn't hit anything
+
+        nodes ~= hit.front;
+        heading = vec2f(1,1);
+    }
+
+    auto laser = em.create();
+    auto line = laser.register!Line(nodes, color, thickness);
 
     auto timer = laser.register!Timer(0f);
     timer.onTick = (em, self, elapsed) {
