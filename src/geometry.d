@@ -222,17 +222,6 @@ unittest {
     assert(no([ 2,-2 ], [ 0,-1 ], [ 0, 0 ], [ 4, 2 ]));
 }
 
-/**
- * Determine if and where a ray intersects a box.
- *
- * Params:
- * a = first ray
- * b = second ray
- *
- * Returns:
- * The point of intersection,
- */
-
 private:
 struct IntersectResult {
     vec2f _point;
