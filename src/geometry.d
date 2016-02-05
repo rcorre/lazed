@@ -8,7 +8,7 @@ import gfm.math;
  * Returns the vector normal to the given segment as a unit vector.
  *
  * In a cartesian space where the +y axis goes 'up', `seg.normal` corresponds to the normal
- * _clockwise from the direction of the segment (counterclockwise if the +y axis goes 'down').
+ * _clockwise_ from the direction of the segment (counterclockwise if the +y axis goes 'down').
  * The other normal is given as `-seg.normal`.
  */
 auto normal(seg2f seg) {
@@ -32,29 +32,40 @@ unittest {
     assert(test(seg2f(vec2f( 2, 2), vec2f(-2,-2)), vec2f(-1, 1)));
 }
 
+auto topLeft(box2f box) { return box.min; }
+auto topRight(box2f box) { return vec2f(box.max.x, box.min.y); }
+auto bottomLeft(box2f box) { return vec2f(box.min.x, box.max.y); }
+auto bottomRight(box2f box) { return box.max; }
+
 /**
  * Returns a range of the segments composing the sides of a box.
  */
 auto edges(box2f box) {
-    return only(seg2f(box.min, vec2f(box.min.x, box.max.y)),  // left
-                seg2f(box.min, vec2f(box.max.x, box.min.y)),  // top
-                seg2f(vec2f(box.max.x, box.min.y), box.max),  // right
-                seg2f(vec2f(box.min.x, box.max.y), box.max)); // bottom
+    return only(seg2f(box.topLeft, box.topRight),       // top
+                seg2f(box.topRight, box.bottomRight),   // right
+                seg2f(box.bottomRight, box.bottomLeft), // bottom
+                seg2f(box.bottomLeft, box.topLeft));    // left
 }
 
 unittest {
-    import std.algorithm : all, canFind;
+    import std.algorithm : map, equal;
 
     auto actual = box2f(0, 2, 4, 8).edges;
     auto expected = [
-        seg2f(vec2f(0, 2), vec2f(0, 8)), // left
         seg2f(vec2f(0, 2), vec2f(4, 2)), // top
         seg2f(vec2f(4, 2), vec2f(4, 8)), // right
-        seg2f(vec2f(0, 8), vec2f(4, 8)), // bottom
+        seg2f(vec2f(4, 8), vec2f(0, 8)), // bottom
+        seg2f(vec2f(0, 8), vec2f(0, 2)), // left
     ];
 
-    assert(actual.length == expected.length);
-    assert(expected.all!(x => actual.canFind(x)));
+    assert(actual.equal(expected));
+
+    auto actualNormals = expected.map!(x => x.normal);
+    auto expectedNormals = [
+        vec2f(0, -1), vec2f(1, 0), vec2f(0, 1), vec2f(-1, 0)
+    ];
+
+    assert(actualNormals.equal(expectedNormals));
 }
 
 /**
@@ -227,7 +238,7 @@ struct IntersectResult {
     vec2f _point;
     alias _point this; // behave like a vector
 
-    bool opCast(T : bool)() const { 
+    bool opCast(T : bool)() const {
         import std.math : isNaN;
         return !_point.x.isNaN && !_point.y.isNaN;
     }
