@@ -224,15 +224,17 @@ unittest {
 
 private:
 struct IntersectResult {
-    private bool _ok;
     vec2f _point;
-
     alias _point this; // behave like a vector
-    bool opCast(T : bool)() const { return _ok; }
+
+    bool opCast(T : bool)() const { 
+        import std.math : isNaN;
+        return !_point.x.isNaN && !_point.y.isNaN;
+    }
 }
 
-auto intersection(vec2f point) { return IntersectResult(true, point); }
-auto noIntersection() { return IntersectResult(false); }
+auto intersection(vec2f point) { return IntersectResult(point); }
+auto noIntersection() { return IntersectResult(); }
 
 /*
  * Helper reused for ray/segment intersection functions.
