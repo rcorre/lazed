@@ -103,15 +103,17 @@ void createLaser(EntityManager em, vec2f start, vec2f end) {
             return a.squaredDistanceTo(ray.orig) < b.squaredDistanceTo(ray.orig);
         }
 
-        auto hit = walls
-            .map!(x => ray.intersect(x))    // calculate intersection
-            .filter!(x => x)                // remove non-hits
-            .minPos!((a,b) => closer(a,b)); // take the closest hit
+        import std.typecons : tuple;
 
-        if (hit.empty) break; // we didn't hit anything
+        auto hits = walls
+            .map!(seg => tuple(ray.intersect(seg), seg.normal)) // pair intersection with normal
+            .filter!(x => x[0])                                 // remove non-hits
+            .minPos!((a,b) => closer(a[0],b[0]));               // take the closest hit
 
-        nodes ~= hit.front;
-        heading = vec2f(1,1);
+        if (hits.empty) break; // we didn't hit anything
+
+        nodes ~= hits.front[0];
+        heading = heading.reflect(hits.front[1]);
     }
 
     auto laser = em.create();
