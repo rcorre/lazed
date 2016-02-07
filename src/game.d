@@ -16,14 +16,15 @@ class Game : EntitySysD {
 
         _spritesheet = al_load_bitmap("content/spritesheet.png");
 
-        systems.register(new RenderSystem(_spritesheet));
+        auto player = entities.createPlayer;
+
+        systems.register(new RenderSystem(_spritesheet, player));
         systems.register(new MotionSystem);
         systems.register(new InputSystem(events));
         systems.register(new LineRenderSystem);
         systems.register(new TimerSystem);
         systems.register(new AnimationSystem);
 
-        entities.createPlayer;
         entities.createMap("content/map0.json");
     }
 

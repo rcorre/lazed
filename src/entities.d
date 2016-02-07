@@ -10,6 +10,7 @@ import allegro5.allegro;
 import allegro5.allegro_color;
 
 import geometry;
+import constants;
 import components;
 
 private:
@@ -29,7 +30,7 @@ auto spriteAt(int row, int col) {
 }
 
 public:
-void createPlayer(EntityManager em) {
+auto createPlayer(EntityManager em) {
     enum speed = 100; // px / sec
 
     auto ent = em.create();
@@ -72,7 +73,9 @@ void createPlayer(EntityManager em) {
     // face the mouse
     input.mouseMoved = (em, self, pos) {
         import std.math : atan2;
-        auto disp = pos - self.component!Transform.pos;
+        // for now, the player is always at the screen center
+        // just use the offset from the center to the mouse
+        auto disp = pos - vec2f(screenW, screenH) / 2;
         self.component!Transform.angle = atan2(disp.y, disp.x);
     };
 
@@ -80,6 +83,8 @@ void createPlayer(EntityManager em) {
     input.mouseDown = (em, self, pos, button) {
         em.createLaser(self.component!Transform.pos, pos);
     };
+
+    return ent;
 }
 
 void createLaser(EntityManager em, vec2f start, vec2f end) {
