@@ -51,6 +51,7 @@ struct PlayerCollider {
 }
 
 struct Velocity {
+    float speed = 0f;
     vec2f linear = [0,0];
 }
 
@@ -83,4 +84,13 @@ struct Animator {
         this.start = start;
         this.offset = offset;
     }
+}
+
+struct Equipment {
+    void function(Entity self, bool on) onToggle;
+    bool on;
+}
+
+struct SpeedBoost {
+    float factor = 1f;
 }

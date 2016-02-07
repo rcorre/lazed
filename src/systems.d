@@ -85,7 +85,7 @@ class MotionSystem : System {
 
         foreach (ent, trans, vel; em.entitiesWith!(Transform, Velocity)) {
             auto time = dt.total!"msecs" / 1000f;
-            auto end = trans.pos + vel.linear * time;
+            auto end = trans.pos + vel.linear * vel.speed * time;
 
             auto coll = ent.component!PlayerCollider;
 

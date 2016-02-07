@@ -36,7 +36,7 @@ auto createPlayer(EntityManager em) {
     auto ent = em.create();
 
     ent.register!Transform(vec2f(400, 400));
-    ent.register!Velocity();
+    ent.register!Velocity(speed);
     ent.register!Sprite(SpriteRect.player);
     ent.register!Animator(0.1f, SpriteRect.player, animationOffset);
     ent.register!PlayerCollider(12); // radius = 12
@@ -44,31 +44,31 @@ auto createPlayer(EntityManager em) {
     auto input = ent.register!InputListener();
 
     input.keyDown = (em, self, key) {
-        auto ref vel() { return self.component!Velocity.linear; }
+        auto ref dir() { return self.component!Velocity.linear; }
 
         switch(key) {
-            case ALLEGRO_KEY_W: vel.y -= speed; break;
-            case ALLEGRO_KEY_S: vel.y += speed; break;
-            case ALLEGRO_KEY_A: vel.x -= speed; break;
-            case ALLEGRO_KEY_D: vel.x += speed; break;
+            case ALLEGRO_KEY_W: dir.y -= 1; break;
+            case ALLEGRO_KEY_S: dir.y += 1; break;
+            case ALLEGRO_KEY_A: dir.x -= 1; break;
+            case ALLEGRO_KEY_D: dir.x += 1; break;
             default:
         }
 
-        self.component!Animator.run = vel.length > 0; // animate if moving
+        self.component!Animator.run = dir.length > 0; // animate if moving
     };
 
     input.keyUp = (em, self, key) {
-        auto ref vel() { return self.component!Velocity.linear; }
+        auto ref dir() { return self.component!Velocity.linear; }
 
         switch(key) {
-            case ALLEGRO_KEY_W: vel.y += speed; break;
-            case ALLEGRO_KEY_S: vel.y -= speed; break;
-            case ALLEGRO_KEY_A: vel.x += speed; break;
-            case ALLEGRO_KEY_D: vel.x -= speed; break;
+            case ALLEGRO_KEY_W: dir.y += 1; break;
+            case ALLEGRO_KEY_S: dir.y -= 1; break;
+            case ALLEGRO_KEY_A: dir.x += 1; break;
+            case ALLEGRO_KEY_D: dir.x -= 1; break;
             default:
         }
 
-        self.component!Animator.run = vel.length > 0; // animate if moving
+        self.component!Animator.run = dir.length > 0; // animate if moving
     };
 
     // face the mouse
@@ -82,7 +82,20 @@ auto createPlayer(EntityManager em) {
 
     // fire a laser
     input.mouseDown = (em, self, pos, button) {
-        em.createLaser(self.component!Transform.pos, pos);
+        if (button == 1) {
+            em.createLaser(self.component!Transform.pos, pos);
+        }
+        else if (self.isRegistered!Equipment) {
+            auto item = self.component!Equipment;
+            item.on = !item.on;
+            item.onToggle(self, item.on);
+        }
+    };
+
+    auto equipment = ent.register!Equipment;
+
+    equipment.onToggle = (self, on) {
+        self.component!Velocity.speed = speed * ((on) ? 2 : 1);
     };
 
     return ent;
