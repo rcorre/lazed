@@ -82,8 +82,12 @@ auto createPlayer(EntityManager em) {
 
     // fire a laser
     input.mouseDown = (em, self, pos, button) {
+
         if (button == 1) {
-            em.createLaser(self.component!Transform.pos, pos);
+            // for now, the player is always at the screen center
+            // compute direction from the screen center to the mouse
+            auto heading = pos - vec2f(screenW, screenH) / 2 ;
+            em.createLaser(self.component!Transform.pos, heading);
         }
         else if (self.isRegistered!Equipment) {
             auto item = self.component!Equipment;
@@ -101,14 +105,13 @@ auto createPlayer(EntityManager em) {
     return ent;
 }
 
-void createLaser(EntityManager em, vec2f start, vec2f end) {
+void createLaser(EntityManager em, vec2f start, vec2f heading) {
     immutable color = al_map_rgb(255, 0, 0);
     enum thickness = 4;
     enum fadePerSec = 2f; // fade 100% over 0.5s
 
     // determine the path the laser takes
     auto nodes = [ start ];
-    auto heading = end - start;
 
     auto walls = em.components!Collider
         .array

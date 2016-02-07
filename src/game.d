@@ -21,7 +21,7 @@ class Game : EntitySysD {
         systems.register(new RenderSystem(_spritesheet, player));
         systems.register(new MotionSystem);
         systems.register(new InputSystem(events));
-        systems.register(new LineRenderSystem);
+        systems.register(new LineRenderSystem(player));
         systems.register(new TimerSystem);
         systems.register(new AnimationSystem);
 

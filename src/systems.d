@@ -155,10 +155,30 @@ class InputSystem : System, Receiver!AllegroEvent {
 }
 
 class LineRenderSystem : System {
+    Entity _camera;
+    this(Entity camera) {
+        _camera = camera;
+    }
+
     override void run(EntityManager em, EventManager events, Duration dt) {
+        assert(_camera.valid && _camera.isRegistered!Transform);
+
+        ALLEGRO_TRANSFORM oldTrans, cameraTrans;
+        al_copy_transform(&oldTrans, al_get_current_transform());
+
+        auto cameraPos = _camera.component!Transform.pos;
+        al_identity_transform(&cameraTrans);
+        al_translate_transform(&cameraTrans,
+                               -cameraPos.x + screenW / 2,
+                               -cameraPos.y + screenH / 2);
+
+        al_use_transform(&cameraTrans);
+
         foreach (line; em.components!Line)
             foreach (start, end ; line.nodes.lockstep(line.nodes.drop(1)))
                 al_draw_line(start.x, start.y, end.x, end.y, line.color, line.thickness);
+
+        al_use_transform(&oldTrans);
     }
 }
 
