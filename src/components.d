@@ -46,6 +46,10 @@ struct Collider {
     bool reflective;
 }
 
+struct PlayerCollider {
+    float radius;
+}
+
 struct Velocity {
     vec2f linear = [0,0];
 }

@@ -1,6 +1,7 @@
 module systems;
 
 import std.range;
+import std.algorithm;
 import std.container.slist;
 
 import gfm.math;
@@ -10,6 +11,7 @@ import allegro5.allegro_color;
 import allegro5.allegro_primitives;
 
 import events;
+import geometry;
 import entities;
 import components;
 
@@ -54,9 +56,34 @@ class RenderSystem : System {
 
 class MotionSystem : System {
     override void run(EntityManager em, EventManager events, Duration dt) {
-        foreach (entity, trans, vel; em.entitiesWith!(Transform, Velocity)) {
+        auto walls = em.components!Collider
+            .array
+            .map!(x => x.rect.edges)
+            .joiner;
+
+        foreach (ent, trans, vel; em.entitiesWith!(Transform, Velocity)) {
             auto time = dt.total!"msecs" / 1000f;
-            trans.pos = trans.pos + vel.linear * time;
+            auto end = trans.pos + vel.linear * time;
+
+            auto coll = ent.component!PlayerCollider;
+
+            if (coll !is null) {
+                auto closer(vec2f a, vec2f b) {
+                    return a.squaredDistanceTo(trans.pos) <
+                           b.squaredDistanceTo(trans.pos);
+                }
+
+                auto disp = seg2f(trans.pos, end);
+                auto hits = walls
+                    .map!(wall => wall.intersect(disp)) // intersect wall and displacement
+                    .filter!(x => x)                    // remove non-hits
+                    .minPos!((a,b) => closer(a,b));     // take the closest hit
+
+                if (hits.empty) trans.pos = end;
+            }
+            else {
+                trans.pos = end;
+            }
         }
     }
 }

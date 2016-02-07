@@ -169,6 +169,55 @@ unittest {
 }
 
 /**
+ * Determine if and where two rays intersect.
+ *
+ * If the rays are identical, returns the first point they meet.
+ *
+ * Params:
+ * a = first ray
+ * b = second ray
+ *
+ * Returns:
+ * The point of intersection,
+ */
+auto intersect(seg2f a, seg2f b) {
+    float u, v;
+    immutable ra = ray2f(a.a, a.b - a.a);
+    immutable rb = ray2f(b.a, b.b - b.a);
+    rayIntersectProgress(ra, rb, u, v);
+    return (u > 0 && u < 1 && v > 0 && v < 1) ?
+        intersection(a.a + (a.b - a.a) * u) : noIntersection;
+}
+
+unittest {
+    // Validate that the ray (a1, a2) intersects the segment (b1, b2) at p
+    bool yes(float[2] a1, float[2] a2, float[2] b1, float[2] b2, float[2] p) {
+        import std.math : approxEqual;
+
+        immutable a = seg2f(vec2f(a1), vec2f(a2)),
+                  b = seg2f(vec2f(b1), vec2f(b2)),
+                  res = intersect(a, b);
+
+        return res && res.x.approxEqual(p[0]) && res.y.approxEqual(p[1]);
+    }
+
+    // Validate that the ray (as, ad) doesn't intersect the segment (ba, bb)
+    bool no(float[2] as, float[2] ad, float[2] ba, float[2] bb) {
+        immutable a = ray2f(vec2f(as), vec2f(ad)),
+                  b = seg2f(vec2f(ba), vec2f(bb));
+        return !intersect(a, b);
+    }
+
+    //            a1        a2        b1        b2        p
+    assert(yes([ 0, 0 ], [ 2, 2 ], [ 2, 0 ], [ 0, 2 ], [ 1, 1 ]));
+    assert(yes([ 2, 0 ], [ 4, 0 ], [ 3, 4 ], [ 3,-2 ], [ 3, 0 ]));
+
+    //            a1        a2        b1        b2
+    assert(no([ 0, 0 ], [ 1, 1 ], [ 2, 1 ], [ 4, 1 ]));
+    assert(no([ 0, 0 ], [-1,-1 ], [ 1, 1 ], [ 2, 2 ]));
+}
+
+/**
  * Determine if and where a ray intersects a box.
  *
  * Given multiple intersections, returns the one closest to the ray's origin.

@@ -38,6 +38,7 @@ void createPlayer(EntityManager em) {
     ent.register!Velocity();
     ent.register!Sprite(SpriteRect.player);
     ent.register!Animator(0.1f, SpriteRect.player, animationOffset);
+    ent.register!PlayerCollider(12); // radius = 12
 
     auto input = ent.register!InputListener();
 
