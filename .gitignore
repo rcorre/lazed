@@ -9,3 +9,6 @@ lazed
 build/
 content/
 __test__library__
+
+# content
+*.mmpz.bak
