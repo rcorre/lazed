@@ -13,16 +13,21 @@ import allegro5.allegro_primitives;
 import events;
 import geometry;
 import entities;
+import constants;
 import components;
 
 class RenderSystem : System {
     private ALLEGRO_BITMAP* _spritesheet;
+    private Entity _camera;
 
-    this(ALLEGRO_BITMAP* spritesheet) {
+    this(ALLEGRO_BITMAP* spritesheet, Entity camera) {
         _spritesheet = spritesheet;
+        _camera = camera;
     }
 
     override void run(EntityManager em, EventManager events, Duration dt) {
+        assert(_camera.valid && _camera.isRegistered!Transform);
+
         // store old transformation to restore later.
         ALLEGRO_TRANSFORM oldTrans;
         al_copy_transform(&oldTrans, al_get_current_transform());
@@ -30,15 +35,32 @@ class RenderSystem : System {
         // holding optimizes multiple draws from the same spritesheet
         al_hold_bitmap_drawing(true);
 
-        ALLEGRO_TRANSFORM trans;
+        ALLEGRO_TRANSFORM trans, baseTrans;
+
+        auto cameraPos = _camera.component!Transform.pos;
+
+        // set up the camera offset
+        al_identity_transform(&baseTrans);
+        al_translate_transform(&baseTrans,
+                               -cameraPos.x + screenW / 2,
+                               -cameraPos.y + screenH / 2);
+
         foreach (entity; em.entitiesWith!(Sprite, Transform)) {
             auto entityTrans = entity.component!Transform.allegroTransform;
             auto r = entity.component!Sprite.rect;
 
+            // reset the current drawing transform
             al_identity_transform(&trans);
+
             // place the origin of the sprite at its center
             al_translate_transform(&trans, -r.width / 2, -r.height / 2);
+
+            // apply the transform of the current entity
             al_compose_transform(&trans, &entityTrans);
+
+            // finally, translate everything by the camera
+            al_compose_transform(&trans, &baseTrans);
+
             al_use_transform(&trans);
 
             al_draw_bitmap_region(_spritesheet,

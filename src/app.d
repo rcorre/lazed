@@ -5,11 +5,7 @@ import allegro5.allegro_image;
 import allegro5.allegro_primitives;
 
 import game;
-
-enum {
-    screenW = 800,
-    screenH = 600,
-}
+import constants;
 
 void main() {
     al_init();
