@@ -17,9 +17,12 @@ private:
 enum spriteSize = 32; // size of grid in spritesheet
 enum animationOffset = vec2i(32, 0); // space between animation frames
 enum maxLaserBounce = 5; // number of times a laser can reflect
+enum pickupRespawnTime = 5; // seconds before a pickup respawns
 
-enum SpriteRect {
-    player = spriteAt(3, 0)
+struct SpriteRect {
+    static immutable player = spriteAt(3, 0);
+    static immutable speedPickup = spriteAt(4, 0);
+    static immutable shieldPickup = spriteAt(4, 1);
 }
 
 auto spriteAt(int row, int col) {
@@ -94,12 +97,6 @@ auto createPlayer(EntityManager em) {
             item.on = !item.on;
             item.onToggle(self, item.on);
         }
-    };
-
-    auto equipment = ent.register!Equipment;
-
-    equipment.onToggle = (self, on) {
-        self.component!Velocity.speed = speed * ((on) ? 2 : 1);
     };
 
     return ent;
@@ -185,4 +182,38 @@ void createMap(EntityManager em, string path) {
       auto ent = em.create();
       ent.register!Collider(box, reflective);
   }
+
+  foreach(obj ; mapData.getLayer("pickup").objects)
+      createPickup(em, vec2f(obj.x, obj.y), obj.name);
+}
+
+void createPickup(EntityManager em, vec2f pos, string name) {
+    import std.conv : to;
+
+    auto ent = em.create();
+    ent.register!Transform(pos);
+
+    auto timer = ent.register!Timer(pickupRespawnTime);
+    auto sprite = ent.register!Sprite;
+    auto pickup = ent.register!Pickup;
+
+    timer.onTick = (em, self, elapsed) {
+        self.component!Pickup.spawned = true;
+        self.component!Sprite.tint.a = 1; // un-dim to indicate it is spawned
+    };
+
+    final switch (name.to!(Pickup.Type)) with (Pickup.Type) {
+        case shield:
+            sprite.rect = SpriteRect.shieldPickup;
+            pickup.equipment.onToggle = (self, on) {
+                self.component!Velocity.speed = speed * ((on) ? 2 : 1);
+            };
+            break;
+        case speed:
+            sprite.rect = SpriteRect.speedPickup;
+            pickup.equipment.onToggle = (self, on) {
+                self.component!Velocity.speed = speed * ((on) ? 2 : 1);
+            };
+            break;
+    }
 }

@@ -29,7 +29,6 @@ struct Transform {
 
 struct Sprite {
     box2i rect;
-    ALLEGRO_BITMAP *bmp;
     ALLEGRO_COLOR tint = ALLEGRO_COLOR(1,1,1,1);
 }
 
@@ -91,6 +90,9 @@ struct Equipment {
     bool on;
 }
 
-struct SpeedBoost {
-    float factor = 1f;
+struct Pickup {
+    enum Type { shield, speed }
+
+    Equipment equipment;
+    bool spawned;
 }

@@ -211,3 +211,28 @@ class AnimationSystem : System {
         }
     }
 }
+
+class PickupSystem : System {
+    private enum maxFrame = 8;  // all animations have 8 frames
+
+    override void run(EntityManager em, EventManager events, Duration dt) {
+        auto players = em.entitiesWith!(Transform, PlayerCollider);
+        auto pickups = em.entitiesWith!(Transform, Pickup, Sprite, Timer);
+        foreach (playerEnt, playerTrans, playerColl; players)
+            foreach (pickupEnt, pickupTrans, pickup, pickupSprite, pickupTimer; pickups) {
+                if (pickup.spawned &&
+                    playerTrans.pos.distanceTo(pickupTrans.pos) < playerColl.radius)
+                {
+                    pickup.spawned = false;
+                    pickupSprite.tint.a = 0.3;
+                    pickupTimer.countdown = pickupTimer.duration; // set respawn
+
+                    if (playerEnt.isRegistered!Equipment)
+                        playerEnt.unregister!Equipment;
+
+                    auto equip = playerEnt.register!Equipment;
+                    *equip = pickup.equipment;
+                }
+            }
+    }
+}
