@@ -197,9 +197,11 @@ void createPickup(EntityManager em, vec2f pos, string name) {
     auto sprite = ent.register!Sprite;
     auto pickup = ent.register!Pickup;
 
+    sprite.tint = al_map_rgb(128, 128, 128); // dim the pickup until it spawns
+
     timer.onTick = (em, self, elapsed) {
         self.component!Pickup.spawned = true;
-        self.component!Sprite.tint.a = 1; // un-dim to indicate it is spawned
+        self.component!Sprite.tint = al_map_rgb(255, 255, 255);
     };
 
     final switch (name.to!(Pickup.Type)) with (Pickup.Type) {

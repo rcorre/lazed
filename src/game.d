@@ -24,6 +24,7 @@ class Game : EntitySysD {
         systems.register(new LineRenderSystem(player));
         systems.register(new TimerSystem);
         systems.register(new AnimationSystem);
+        systems.register(new PickupSystem);
 
         entities.createMap("content/map0.json");
     }

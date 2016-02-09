@@ -63,10 +63,11 @@ class RenderSystem : System {
 
             al_use_transform(&trans);
 
-            al_draw_bitmap_region(_spritesheet,
-                                  r.min.x, r.min.y, r.width, r.height,
-                                  0, 0,
-                                  0);
+            al_draw_tinted_bitmap_region(_spritesheet,
+                                         entity.component!Sprite.tint,
+                                         r.min.x, r.min.y, r.width, r.height,
+                                         0, 0,
+                                         0);
         }
 
         al_hold_bitmap_drawing(false);
@@ -219,20 +220,21 @@ class PickupSystem : System {
         auto players = em.entitiesWith!(Transform, PlayerCollider);
         auto pickups = em.entitiesWith!(Transform, Pickup, Sprite, Timer);
         foreach (playerEnt, playerTrans, playerColl; players)
-            foreach (pickupEnt, pickupTrans, pickup, pickupSprite, pickupTimer; pickups) {
+            foreach (pickupEnt, pickupTrans, pickup, pickupSprite, pickupTimer; pickups)
                 if (pickup.spawned &&
                     playerTrans.pos.distanceTo(pickupTrans.pos) < playerColl.radius)
                 {
                     pickup.spawned = false;
-                    pickupSprite.tint.a = 0.3;
+                    pickupSprite.tint = al_map_rgb(128, 128, 128); // dim pickup
                     pickupTimer.countdown = pickupTimer.duration; // set respawn
 
                     if (playerEnt.isRegistered!Equipment)
                         playerEnt.unregister!Equipment;
 
+                    assert(!playerEnt.isRegistered!Equipment);
+
                     auto equip = playerEnt.register!Equipment;
-                    *equip = pickup.equipment;
+                    //*equip = pickup.equipment;
                 }
-            }
     }
 }
