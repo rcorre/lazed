@@ -10,6 +10,7 @@ import allegro5.allegro;
 import allegro5.allegro_color;
 import allegro5.allegro_primitives;
 
+import net;
 import events;
 import geometry;
 import entities;
@@ -236,5 +237,41 @@ class PickupSystem : System {
                     auto equip = playerEnt.register!Equipment;
                     //*equip = pickup.equipment;
                 }
+    }
+}
+
+class NetworkClientSystem : System {
+    private NetClient _client;
+
+    this() {
+        _client = new NetClient("192.168.1.103", portNum);
+    }
+
+    override void run(EntityManager em, EventManager events, Duration dt) {
+        foreach(msg ; _client.receiveAll) {
+            import std.stdio;
+            writeln(msg);
+        }
+    }
+}
+
+class NetworkServerSystem : System {
+    private NetServer _server;
+    bool gotClient;
+
+    this() {
+        _server = new NetServer(portNum);
+    }
+
+    override void run(EntityManager em, EventManager events, Duration dt) {
+        if (!gotClient) {
+            gotClient = _server.acceptClient;
+            return;
+        }
+
+        foreach(msg ; _server.receiveAll) {
+            import std.stdio;
+            writeln(msg);
+        }
     }
 }
