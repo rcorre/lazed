@@ -18,12 +18,20 @@ class Game : EntitySysD {
 
         auto player = entities.createPlayer;
 
-        systems.register(new RenderSystem(_spritesheet, player));
+        version (LazedServer) {
+            systems.register(new NetServerSystem);
+        }
+        else {
+            systems.register(new NetClientSystem);
+            systems.register(new RenderSystem(_spritesheet, player));
+            systems.register(new LineRenderSystem(player));
+            systems.register(new AnimationSystem);
+        }
+
+        // common systems
         systems.register(new MotionSystem);
         systems.register(new InputSystem(events));
-        systems.register(new LineRenderSystem(player));
         systems.register(new TimerSystem);
-        systems.register(new AnimationSystem);
         systems.register(new PickupSystem);
 
         entities.createMap("content/map0.json");

@@ -9,45 +9,56 @@ dependency "allegro" path="DAllegro5"
 dependency "gfm:math" version="~>5.0.0"
 dependency "entitysysd" version="==2.1.1+commit.3.gb41e9dd"
 
+configuration "client" {
+    targetType "executable"
+    targetName "./lazed"
+}
+
+configuration "server" {
+    targetType "executable"
+    targetName "./lazed_server"
+    versions "LazedServer"
+}
+
 lflags "-Lbuild/lib"
 
-  libs "allegro-static"            \
-       "allegro_acodec-static"     \
-       "allegro_audio-static"      \
-       "allegro_color-static"      \
-       "allegro_font-static"       \
-       "allegro_image-static"      \
-       "allegro_main-static"       \
-       "allegro_ttf-static"        \
-       "allegro_primitives-static" \
-       "png"                       \
-       "FLAC"                      \
-       "ogg"                       \
-       "vorbisfile"                \
-       "vorbis"                    \
-       "pulse-simple"              \
-       "pulse"                     \
-       "asound"                    \
-       "openal"                    \
-       "z"                         \
-       "jpeg"                      \
-       "freetype"                  \
-       "m"                         \
-       "pthread"                   \
-       "SM"                        \
-       "ICE"                       \
-       "GL"                        \
-       "GLU"                       \
-       "X11"                       \
-       "Xext"                      \
-       "Xcursor"                   \
-       "Xi"                        \
-       "Xinerama"                  \
-       "Xrandr"                    \
-       "Xrender"                   \
-       "Xfixes"                    \
-       "Xdamage"                   \
-       "X11-xcb"                   \
-       "Xxf86vm"                   \
-       "Xau"                       \
-       "Xdmcp"
+libs "allegro-static"          \
+   "allegro_acodec-static"     \
+   "allegro_audio-static"      \
+   "allegro_color-static"      \
+   "allegro_font-static"       \
+   "allegro_image-static"      \
+   "allegro_main-static"       \
+   "allegro_ttf-static"        \
+   "allegro_primitives-static" \
+   "png"                       \
+   "FLAC"                      \
+   "ogg"                       \
+   "vorbisfile"                \
+   "vorbis"                    \
+   "pulse-simple"              \
+   "pulse"                     \
+   "asound"                    \
+   "openal"                    \
+   "z"                         \
+   "jpeg"                      \
+   "freetype"                  \
+   "m"                         \
+   "pthread"                   \
+   "SM"                        \
+   "ICE"                       \
+   "GL"                        \
+   "GLU"                       \
+   "X11"                       \
+   "Xext"                      \
+   "Xcursor"                   \
+   "Xi"                        \
+   "Xinerama"                  \
+   "Xrandr"                    \
+   "Xrender"                   \
+   "Xfixes"                    \
+   "Xdamage"                   \
+   "X11-xcb"                   \
+   "Xxf86vm"                   \
+   "Xau"                       \
+   "Xdmcp"

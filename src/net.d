@@ -5,12 +5,27 @@ import std.socket;
 import std.variant;
 import std.concurrency;
 
-class NetClient {
+class NetClient(MsgTypes...) {
+    private alias NetMsg = Algebraic!MsgTypes;
+
     private Socket _sock;
 
-    this(string address, ushort port) {
-        // just assuming the first address is the correct one...
-        _sock = new TcpSocket(getAddress(address, port)[0]);
+    ~this() {
+        if (_sock !is null) {
+            _sock.shutdown(SocketShutdown.BOTH);
+            _sock.close();
+        }
+    }
+
+    bool connected() { return _sock !is null; }
+
+    void tryConnect(string address, ushort port) {
+        try {
+            // just assuming the first address is the correct one...
+            _sock = new TcpSocket(getAddress(address, port)[0]);
+            _sock.blocking = false;
+        }
+        catch { }
     }
 
     void send(T)(T obj) if (NetMsg.allowed!T) {
@@ -44,7 +59,9 @@ class NetClient {
     }
 }
 
-class NetServer {
+class NetServer(MsgTypes...) {
+    private alias NetMsg = Algebraic!MsgTypes;
+
     private Socket _server;
     private Socket[] _clients;
 
@@ -54,6 +71,15 @@ class NetServer {
         _server.bind(new InternetAddress(port));
         _server.blocking = false; // just poll the socket
         _server.listen(1); // 1 is backlog
+    }
+
+    ~this() {
+        foreach(client ; _clients) {
+            client.shutdown(SocketShutdown.BOTH);
+            client.close();
+        }
+        _server.shutdown(SocketShutdown.BOTH);
+        _server.close();
     }
 
     bool acceptClient() {
@@ -102,14 +128,4 @@ class NetServer {
             assert(ret == msg.sizeof, "Server failed to send network message");
         }
     }
-}
-
-alias NetMsg = Algebraic!(VelocityMsg, AngleMessage);
-
-struct VelocityMsg {
-    float x, y;
-}
-
-struct AngleMessage {
-    float angle;
 }

@@ -240,27 +240,36 @@ class PickupSystem : System {
     }
 }
 
-class NetworkClientSystem : System {
-    private NetClient _client;
+class NetClientSystem : System, Receiver!MotionRequest, Receiver!LookRequest {
+    private NetClient!NetMsgTypes _client;
 
     this() {
-        _client = new NetClient("192.168.1.103", portNum);
+        _client = new NetClient!NetMsgTypes;
     }
 
     override void run(EntityManager em, EventManager events, Duration dt) {
+        // poll for a connection until available
+        if (!_client.connected) {
+            _client.tryConnect("192.168.1.103", portNum);
+            return;
+        }
+
         foreach(msg ; _client.receiveAll) {
             import std.stdio;
             writeln(msg);
         }
     }
+
+    void receive(MotionRequest req) { _client.send(req); }
+    void receive(LookRequest req) { _client.send(req); }
 }
 
-class NetworkServerSystem : System {
-    private NetServer _server;
+class NetServerSystem : System {
+    private NetServer!NetMsgTypes _server;
     bool gotClient;
 
     this() {
-        _server = new NetServer(portNum);
+        _server = new NetServer!NetMsgTypes(portNum);
     }
 
     override void run(EntityManager em, EventManager events, Duration dt) {

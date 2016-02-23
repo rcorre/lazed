@@ -8,7 +8,7 @@ import game;
 import constants;
 
 void main() {
-    al_init();
+    if (!al_init()) assert(0, "al_init failed!");
 
     auto display = al_create_display(screenW, screenH);
     auto queue   = al_create_event_queue();
@@ -57,4 +57,7 @@ void main() {
             timestamp = now;
         }
     }
+
+    al_destroy_display(display);
+    al_destroy_event_queue(queue);
 }
