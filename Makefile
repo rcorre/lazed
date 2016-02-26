@@ -28,9 +28,11 @@ ALLEGRO_OPTS = \
 
 debug: allegro content
 	@dub build --build=debug
+	@dub build --build=debug --config=server
 
 release: allegro content
 	@dub build --build=release
+	@dub build --build=release --config=server
 
 run: debug
 	@dub run
