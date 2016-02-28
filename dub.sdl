@@ -12,12 +12,15 @@ dependency "entitysysd" version="==2.1.1+commit.3.gb41e9dd"
 configuration "client" {
     targetType "executable"
     targetName "./lazed"
+    mainSourceFile "src/client.d"
+    excludedSourceFiles "src/server.d"
 }
 
 configuration "server" {
     targetType "executable"
     targetName "./lazed_server"
-    versions "LazedServer"
+    mainSourceFile "src/server.d"
+    excludedSourceFiles "src/client.d"
 }
 
 lflags "-Lbuild/lib"

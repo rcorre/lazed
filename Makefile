@@ -27,11 +27,11 @@ ALLEGRO_OPTS = \
 # --- Top-level Rules ---
 
 debug: allegro content
-	@dub build --build=debug
+	@dub build --build=debug --config=client
 	@dub build --build=debug --config=server
 
 release: allegro content
-	@dub build --build=release
+	@dub build --build=release --config=client
 	@dub build --build=release --config=server
 
 run: debug

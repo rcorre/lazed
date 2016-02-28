@@ -10,22 +10,13 @@ import constants;
 void main() {
     if (!al_init()) assert(0, "al_init failed!");
 
-    auto display = al_create_display(screenW, screenH);
     auto queue   = al_create_event_queue();
-
-    al_install_keyboard();
-    al_install_mouse();
-    al_init_image_addon();
-    al_init_primitives_addon();
 
     auto fpsTimer = al_create_timer(1.0 / 60);
 
-    al_register_event_source(queue, al_get_display_event_source(display));
-    al_register_event_source(queue, al_get_keyboard_event_source());
-    al_register_event_source(queue, al_get_mouse_event_source());
     al_register_event_source(queue, al_get_timer_event_source(fpsTimer));
 
-    auto game = new Game();
+    auto game = new ServerGame();
 
     al_start_timer(fpsTimer);
 
@@ -41,9 +32,6 @@ void main() {
             case ALLEGRO_EVENT_TIMER:
                 update = update || (event.timer.source == fpsTimer);
                 break;
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                exit = true;
-                break;
             default:
         }
 
@@ -58,6 +46,5 @@ void main() {
         }
     }
 
-    al_destroy_display(display);
     al_destroy_event_queue(queue);
 }
