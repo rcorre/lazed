@@ -38,7 +38,7 @@ class ClientGame : Game {
         auto player = entities.createPlayer;
 
         systems.register(new NetClientSystem);
-        systems.register(new InputSystem(events));
+        systems.register(new InputSystem);
         systems.register(new NetClientSystem);
         systems.register(new RenderSystem(_spritesheet, player));
         systems.register(new LineRenderSystem(player));

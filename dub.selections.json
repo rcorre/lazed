@@ -2,10 +2,10 @@
 	"fileVersion": 1,
 	"versions": {
 		"derelict-sdl2": "1.9.7",
-		"dtiled": "0.3.3",
+		"gfm": "5.0.2",
 		"derelict-util": "2.0.4",
 		"jsonizer": "0.5.2",
-		"gfm": "5.0.1",
-		"entitysysd": "2.1.1"
+		"dtiled": "0.3.3",
+		"entitysysd": "2.3.0"
 	}
 }

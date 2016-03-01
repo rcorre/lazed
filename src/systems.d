@@ -115,10 +115,6 @@ class MotionSystem : System {
 class InputSystem : System, Receiver!AllegroEvent {
     SList!AllegroEvent _queue;
 
-    this(EventManager events) {
-        events.subscribe!AllegroEvent(this);
-    }
-
     override void run(EntityManager es, EventManager events, Duration dt) {
         auto pos(ALLEGRO_EVENT ev) {
             return vec2f(ev.mouse.x, ev.mouse.y);
