@@ -13,7 +13,6 @@ The music, sounds, and art are available under
 The font used is
 [Mecha by Captain Falcon](http://www.fontspace.com/captain-falcon/mecha)
 
-
 # Credits:
 
 - Written in [D](http://dlang.org)
@@ -24,3 +23,7 @@ The font used is
 - Sounds processed with [Audacity](http://www.audacityteam.org/)
 - Font: [Mecha by Captain Falcon](http://www.fontspace.com/captain-falcon/mecha)
 - Some sounds were generated with [bxfr](http://www.bfxr.net/)
+
+# Other thanks:
+
+- [D ENet Tutorials](https://github.com/MrSmith33/enet-tutorials)
