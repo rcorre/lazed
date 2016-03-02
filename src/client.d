@@ -3,12 +3,16 @@ import std.datetime;
 import allegro5.allegro;
 import allegro5.allegro_image;
 import allegro5.allegro_primitives;
+import derelict.enet.enet;
 
 import game;
 import constants;
 
 void main() {
     if (!al_init()) assert(0, "al_init failed!");
+
+    DerelictENet.load();
+    if (enet_initialize()) assert(0, "enet_initialize failed");
 
     auto display = al_create_display(screenW, screenH);
     auto queue   = al_create_event_queue();

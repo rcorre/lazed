@@ -3,6 +3,7 @@ import std.datetime;
 import allegro5.allegro;
 import allegro5.allegro_image;
 import allegro5.allegro_primitives;
+import derelict.enet.enet;
 
 import game;
 import constants;
@@ -10,7 +11,10 @@ import constants;
 void main() {
     if (!al_init()) assert(0, "al_init failed!");
 
-    auto queue   = al_create_event_queue();
+    DerelictENet.load();
+    if (enet_initialize()) assert(0, "enet_initialize failed");
+
+    auto queue = al_create_event_queue();
 
     auto fpsTimer = al_create_timer(1.0 / 60);
 
